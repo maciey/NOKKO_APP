@@ -1,13 +1,37 @@
 import 'package:flutter/material.dart';
+// MP LIB
+import 'package:mp_slib/mp_slib.dart'; 
 
-class HomePage extends StatelessWidget {
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppVersion();    
+  }
+
+  void _loadAppVersion() async {
+    final version = await Utils.getBuildVersion("NOKKO APP");
+    
+    setState(() {
+      appVersion = version;
+    });
+  } 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text('Home - $appVersion'),
       ),
       body: const Center(
         child: Text('Welcome!'),
