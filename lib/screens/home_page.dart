@@ -33,8 +33,20 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Home - $appVersion'),
       ),
-      body: const Center(
-        child: Text('Welcome!'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('🔥 NOKKO 🔥'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Utils.getAppApk('https://www.nokko.pl/APP/app-release.apk');
+              },
+              child: const Text('APK Reinstall'),
+            ),
+          ],
+        ),
       ),
     );
   }
