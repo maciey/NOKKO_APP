@@ -40,8 +40,22 @@ class _HomePageState extends State<HomePage> {
             const Text('🔥 NOKKO 🔥'),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Utils.getAppApk('https://www.nokko.pl/APP/app-release.apk');
+              onPressed: () async {
+                // Z niestandardowym nagłówkiem i kolorem
+                bool answer = await CustomDialog.question_dialog(
+                                                                      context,
+                                                                      'Pobrać APK?',                                                                      
+                                                                      captionColor: Colors.red,
+                );
+                if (answer) {
+                  // Wait
+                  LoadingDialog.show(context, 'Pobieranie APK...');
+                  // Download APK
+                  await Utils.getAppApk('https://www.nokko.pl/APP/app-release.apk');
+
+                  // Hide loading dialog
+                  LoadingDialog.hide (context);
+                }
               },
               child: const Text('APK Reinstall'),
             ),
