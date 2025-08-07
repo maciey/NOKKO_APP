@@ -2,20 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:mp_slib/mp_slib.dart';
 
-// Handler dla wiadomości w background - musi być funkcją top-level
+// Custom handler dla NOKKO - logika specyficzna dla tej aplikacji
 @pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Na platformach mobilnych inicjalizujemy Firebase
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-  }
-  print('🔥 NOKKO Background message: ${message.notification?.title}');
-  
-  // Dodatkowa logika dla wiadomości w background
-  if (message.data['priority'] == 'high') {
-    print('⚡ Wysokopriorytetowa wiadomość w background');
-  }
+Future<void> nokkoBackgroundHandler(RemoteMessage message) async {
+  print('🔥 NOKKO Custom logic: ${message.notification?.title}');
+  // Tutaj można dodać specyficzną logikę dla NOKKO
+  // np. zapisywanie do lokalnej bazy danych, specjalne akcje, itp.
 }
 
 // GlobalKey dla dostępu do Navigator - eksportowany
@@ -28,8 +22,11 @@ void main() async {
   if (!kIsWeb) {
     await Firebase.initializeApp();
     
-    // Rejestracja handlera dla wiadomości w background tylko na mobilnych
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // Ustaw custom handler dla NOKKO z mp_slib
+    setMPBackgroundHandler(nokkoBackgroundHandler);
+    
+    // Użyj uniwersalnego handlera z mp_slib
+    FirebaseMessaging.onBackgroundMessage(mpUniversalBackgroundHandler);
   }
   
   runApp(const MyApp());

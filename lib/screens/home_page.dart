@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:mp_slib/mp_slib.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,157 +22,54 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _initializeFCM() async {
     try {
-      // FCM jest wspierane tylko na mobilnych platformach
-      if (kIsWeb) {
-        setState(() {
-          _fcmToken = 'Web platform - FCM not supported';
-        });
-        return;
-      }
-      
-      // Inicjalizacja Firebase Messaging
-      final messaging = FirebaseMessaging.instance;
-      
-      // Żądanie uprawnień
-      NotificationSettings settings = await messaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: true, // Krytyczne powiadomienia
-        provisional: false,
-        sound: true,
+      // Użyj EnhancedFCMService z mp_slib
+      await EnhancedFCMService.initialize(
+        foregroundHandler: (message) async {
+          setState(() {
+            _receivedMessages.add(
+              '📱 Foreground: ${message.notification?.title} - ${message.notification?.body}'
+            );
+          });
+          
+          // Użyj dialogu z mp_slib z customowymi ustawieniami NOKKO
+          await showMPFCMDialog(
+            context,
+            message,
+            accentColor: Colors.orange,
+            defaultTitle: 'Powiadomienie NOKKO',
+            closeButtonText: 'Zamknij',
+            openButtonText: 'Otwórz',
+            onActionPressed: () {
+              // Custom akcja dla NOKKO
+              print('NOKKO Action URL: ${message.data['action_url']}');
+            },
+          );
+        },
+        openedAppHandler: (message) {
+          setState(() {
+            _receivedMessages.add(
+              '� Clicked: ${message.notification?.title} - ${message.notification?.body}'
+            );
+          });
+        },
+        initialMessageHandler: (message) {
+          setState(() {
+            _receivedMessages.add(
+              '� App opened by: ${message.notification?.title} - ${message.notification?.body}'
+            );
+          });
+        },
+        tokenHandler: (token) {
+          setState(() {
+            _fcmToken = token;
+          });
+          print('🔥 NOKKO FCM Token: $token');
+        },
       );
-
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('🔥 NOKKO: Uprawnienia do powiadomień przyznane');
-      }
-      
-      // Pobierz token FCM
-      final token = await messaging.getToken();
-      setState(() {
-        _fcmToken = token;
-      });
-
-      // Nasłuchiwanie wiadomości w foreground
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        setState(() {
-          _receivedMessages.add(
-            '📱 Foreground: ${message.notification?.title} - ${message.notification?.body}'
-          );
-        });
-        
-        // Wyświetl niestandardowy dialog zamiast systemowego powiadomienia
-        await _showNotificationDialog(message);
-      });
-
-      // Obsługa kliknięć w powiadomienia
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        setState(() {
-          _receivedMessages.add(
-            '👆 Clicked: ${message.notification?.title} - ${message.notification?.body}'
-          );
-        });
-      });
-
-      // Sprawdzenie czy aplikacja została otwarta przez powiadomienie
-      RemoteMessage? initialMessage = await messaging.getInitialMessage();
-      if (initialMessage != null) {
-        setState(() {
-          _receivedMessages.add(
-            '🚀 App opened by: ${initialMessage.notification?.title} - ${initialMessage.notification?.body}'
-          );
-        });
-      }
-
-      print('🔥 NOKKO FCM zainicjalizowany.  Token: $token');
       
     } catch (e) {
       print('❌ Błąd inicjalizacji FCM: $e');
     }
-  }
-
-  Future<void> _showNotificationDialog(RemoteMessage message) async {
-    // Użyj standardowego AlertDialog
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              const Icon(
-                Icons.notifications_active,
-                color: Colors.orange,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  message.notification?.title ?? 'Powiadomienie NOKKO',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (message.notification?.body?.isNotEmpty == true) ...[
-                  Text(
-                    message.notification!.body!,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                if (message.data.isNotEmpty) ...[
-                  const Text(
-                    'Dodatkowe informacje:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  ...message.data.entries.map((entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      '• ${entry.key}: ${entry.value}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  )),
-                ],
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Zamknij'),
-            ),
-            if (message.data.containsKey('action_url')) ...[
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // Tutaj można dodać obsługę URL akcji
-                  print('Action URL: ${message.data['action_url']}');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Otwórz'),
-              ),
-            ],
-          ],
-        );
-      },
-    );
   }
 
   Future<void> _sendTestNotification() async {
@@ -191,8 +88,16 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    // Wyświetl jako dialog w aplikacji
-    await _showNotificationDialog(testMessage);
+    // Użyj dialogu z mp_slib
+    await showMPFCMDialog(
+      context,
+      testMessage,
+      accentColor: Colors.orange,
+      defaultTitle: 'NOKKO Test',
+      onActionPressed: () {
+        print('NOKKO Test Action: ${testMessage.data['action_url']}');
+      },
+    );
     
     setState(() {
       _receivedMessages.add(
@@ -266,6 +171,15 @@ class _HomePageState extends State<HomePage> {
                     const Text(
                       '✅ Wybudzanie urządzenia z uśpienia',
                       style: TextStyle(color: Colors.green),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '🔧 Powered by mp_slib - Enhanced FCM Service',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ],
                 ),
