@@ -1,97 +1,45 @@
+/*
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+// MP LIB
+import 'package:mp_slib/mp_slib.dart';
 
-// Handler dla wiadomości w background - musi być funkcją top-level
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Na platformach mobilnych inicjalizujemy Firebase
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-  }
-  print('🔥 NOKKO Background message: ${message.notification?.title}');
-  
-  // Dodatkowa logika dla wiadomości w background
-  if (message.data['priority'] == 'high') {
-    print('⚡ Wysokopriorytetowa wiadomość w background');
-  }
-}
-
-// GlobalKey dla dostępu do Navigator - eksportowany
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Inicjalizacja Firebase tylko na platformach wspieranych
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-    
-    // Rejestracja handlera dla wiadomości w background tylko na mobilnych
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  }
-  
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'NOKKO',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
-      ),
-      home: _HomePage(),      
-    );
-  }
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePage extends StatefulWidget {
-  @override
-  State<_HomePage> createState() => __HomePageState();
-}
-
-class __HomePageState extends State<_HomePage> {
-  String appVersion = 'NOKKO 1.0.0';
+class _HomePageState extends State<HomePage> {
+  String appVersion = '';
+  final FCMService _fcmService = FCMService();
   String? _fcmToken;
   final List<String> _receivedMessages = [];
 
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
     _initializeFCM();
+  }
+
+  void _loadAppVersion() async {
+    final version = await Utils.getBuildVersion("NOKKO APP");
+    
+    setState(() {
+      appVersion = version;
+    });
   }
 
   Future<void> _initializeFCM() async {
     try {
-      // Inicjalizacja Firebase Messaging
-      final messaging = FirebaseMessaging.instance;
-      
-      // Żądanie uprawnień
-      NotificationSettings settings = await messaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: true, // Krytyczne powiadomienia
-        provisional: false,
-        sound: true,
-      );
-
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('🔥 NOKKO: Uprawnienia do powiadomień przyznane');
-      }
+      // Inicjalizacja podstawowego FCM service
+      await _fcmService.initialize();
       
       // Pobierz token FCM
-      final token = await messaging.getToken();
       setState(() {
-        _fcmToken = token;
+        _fcmToken = _fcmService.fcmToken;
       });
 
       // Nasłuchiwanie wiadomości w foreground
@@ -115,7 +63,7 @@ class __HomePageState extends State<_HomePage> {
         });
       });
 
-      print('🔥 NOKKO FCM zainicjalizowany. Token: $token');
+      print('🔥 NOKKO FCM zainicjalizowany. Token: $_fcmToken');
       
     } catch (e) {
       print('❌ Błąd inicjalizacji FCM: $e');
@@ -123,6 +71,7 @@ class __HomePageState extends State<_HomePage> {
   }
 
   Future<void> _showNotificationDialog(RemoteMessage message) async {
+    // Użyj standardowego AlertDialog
     await showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -188,6 +137,7 @@ class __HomePageState extends State<_HomePage> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  // Tutaj można dodać obsługę URL akcji
                   print('Action URL: ${message.data['action_url']}');
                 },
                 style: ElevatedButton.styleFrom(
@@ -204,6 +154,7 @@ class __HomePageState extends State<_HomePage> {
   }
 
   Future<void> _sendTestNotification() async {
+    // Symulacja otrzymania powiadomienia o wysokim priorytecie
     final testMessage = RemoteMessage(
       messageId: 'test-${DateTime.now().millisecondsSinceEpoch}',
       data: {
@@ -218,6 +169,7 @@ class __HomePageState extends State<_HomePage> {
       ),
     );
 
+    // Wyświetl jako dialog w aplikacji
     await _showNotificationDialog(testMessage);
     
     setState(() {
@@ -289,10 +241,6 @@ class __HomePageState extends State<_HomePage> {
                       '✅ Systemowe powiadomienia (background)',
                       style: TextStyle(color: Colors.green),
                     ),
-                    const Text(
-                      '✅ Wybudzanie urządzenia z uśpienia',
-                      style: TextStyle(color: Colors.green),
-                    ),
                   ],
                 ),
               ),
@@ -330,31 +278,15 @@ class __HomePageState extends State<_HomePage> {
                     
                     ElevatedButton.icon(
                       onPressed: () async {
-                        bool? result = await showDialog<bool>(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Potwierdzenie'),
-                            content: const Text('Pobrać APK?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
-                                child: const Text('Nie'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
-                                child: const Text('Tak'),
-                              ),
-                            ],
-                          ),
+                        bool answer = await CustomDialog.question_dialog(
+                          context,
+                          'Pobrać APK?',                                                                      
+                          captionColor: Colors.red,
                         );
-                        
-                        if (result == true) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Pobieranie APK... (symulacja)'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                        if (answer) {
+                          LoadingDialog.show(context, 'Pobieranie APK...');
+                          await Utils.getAppApk('https://www.nokko.pl/APP/app-release.apk');
+                          LoadingDialog.hide(context);
                         }
                       },
                       icon: const Icon(Icons.download),
@@ -395,7 +327,7 @@ class __HomePageState extends State<_HomePage> {
                           child: Container(
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withAlpha(25),
+                              color: Colors.orange.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -424,3 +356,4 @@ class __HomePageState extends State<_HomePage> {
     );
   }
 }
+*/

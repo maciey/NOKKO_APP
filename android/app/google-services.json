@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "484076262218",
+    "project_id": "nokko-c06a7",
+    "storage_bucket": "nokko-c06a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:484076262218:android:6c9ba7c9e6e615378b27b3",
+        "android_client_info": {
+          "package_name": "pl.nokko.nokko_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "484076262218-1qiu1sr0rdbnvqoos7bmtirf6l3cfbs9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.nokko.nokko_app",
+            "certificate_hash": "7a2b9f3c18c224140bacaebc5be4c190208f1e08"
+          }
+        },
+        {
+          "client_id": "484076262218-egol97tq04r6gr6j7qomuj6ivs6d58fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkhVnDN9NZIW6KketKtNHjxtserJSFcbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "484076262218-egol97tq04r6gr6j7qomuj6ivs6d58fj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "484076262218-qp9mdfpbuffr798c8151mqksik1dnn0q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "pl.nokko.nokkoApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
