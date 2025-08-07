@@ -1,6 +1,6 @@
 {
-    "name": "nokko_app",
-    "short_name": "nokko_app",
+    "name": "Nokko",
+    "short_name": "Nokko",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

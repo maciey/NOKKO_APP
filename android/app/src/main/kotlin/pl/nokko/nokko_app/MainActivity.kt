@@ -1,4 +1,4 @@
-package com.example.nokko_app
+package pl.nokko.nokko_app
 
 import io.flutter.embedding.android.FlutterActivity
 
