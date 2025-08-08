@@ -1,0 +1,9 @@
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/NOKKO_logo.png"
+  remove_alpha_ios: true
+  
+  # Android adaptive icon settings
+  adaptive_icon_background: "#F20571"
+  adaptive_icon_foreground: "assets/NOKKO_logo_white.png"

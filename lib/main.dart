@@ -102,7 +102,7 @@ class _HomePage extends StatefulWidget {
 }
 
 class __HomePageState extends State<_HomePage> {
-  String appVersion = 'NOKKO 1.0.0';
+  String appVersion = '1.0.1';
   String? _fcmToken;
   final List<String> _receivedMessages = [];
 
@@ -214,12 +214,12 @@ class __HomePageState extends State<_HomePage> {
         return AlertDialog(
           title: Row(
             children: [
-              Image.asset(
-                'assets/NOKKO_logo_white.png',
-                height: 20,
-                width: 20,
-              ),
-              const SizedBox(width: 8),
+              // Image.asset(
+              //   'assets/NOKKO_logo.png',
+              //   height: 20,
+              //   width: 20,
+              // ),
+              // const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   message.notification?.title ?? 'Powiadomienie NOKKO',
@@ -323,7 +323,7 @@ class __HomePageState extends State<_HomePage> {
         title: Row(
           children: [
             Image.asset(
-              'assets/NOKKO_logo_white.png',
+              'assets/NOKKO_logo.png',
               height: 24,
               width: 24,
             ),
@@ -340,16 +340,16 @@ class __HomePageState extends State<_HomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Logo Section
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Image.asset(
-                  'assets/NOKKO_logo.png',
-                  height: 120,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(vertical: 20.0),
+            //     child: Image.asset(
+            //       'assets/NOKKO_logo.png',
+            //       height: 120,
+            //       fit: BoxFit.contain,
+            //     ),
+            //   ),
+            // ),
             
             // FCM Status Card
             Card(
@@ -463,6 +463,10 @@ class __HomePageState extends State<_HomePage> {
                       },
                       icon: const Icon(Icons.download),
                       label: const Text('Instalacja z APK'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2bdcce),
+                        foregroundColor: Colors.black,
+                      ),
                     ),
                   ],
                 ),

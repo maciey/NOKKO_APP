@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           children: [
             Image.asset(
-              'assets/NOKKO_logo_white.png',
+              'assets/NOKKO_logo.png',
               height: 24,
               width: 24,
             ),

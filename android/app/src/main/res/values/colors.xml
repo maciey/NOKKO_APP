@@ -2,4 +2,5 @@
 <resources>
     <!-- Kolor powiadomień NOKKO -->
     <color name="colorAccent">#FF00FF</color>
+	<color name="ic_launcher_background">#F20571</color>
 </resources>
