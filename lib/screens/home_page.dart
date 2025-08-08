@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String appVersion = 'NOKKO 1.0.0';
+  String appVersion = '1.0.0';
   String? _fcmToken;
   final List<String> _receivedMessages = [];
 
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
           await showMPFCMDialog(
             context,
             message,
-            accentColor: Colors.orange,
+            accentColor: const Color(0xFFF20571),
             defaultTitle: 'Powiadomienie NOKKO',
             closeButtonText: 'Zamknij',
             openButtonText: 'Otwórz',
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
     await showMPFCMDialog(
       context,
       testMessage,
-      accentColor: Colors.orange,
+      accentColor: const Color(0xFFF20571),
       defaultTitle: 'NOKKO Test',
       onActionPressed: () {
         print('NOKKO Test Action: ${testMessage.data['action_url']}');
@@ -118,10 +118,10 @@ class _HomePageState extends State<HomePage> {
               width: 24,
             ),
             const SizedBox(width: 8),
-            Text('NOKKO - $appVersion'),
+            Text('version $appVersion'),
           ],
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF20571),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                       icon: const Icon(Icons.notifications_active),
                       label: const Text('Test Powiadomienia'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: const Color(0xFFF20571),
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -311,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withAlpha(25),
+                              color: const Color(0xFFF20571).withAlpha(25),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

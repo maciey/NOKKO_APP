@@ -41,8 +41,8 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'NOKKO',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+        primarySwatch: Colors.pink,
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFF20571)),
       ),
       home: _HomePage(),      
     );
@@ -188,7 +188,7 @@ class __HomePageState extends State<_HomePage> {
                   print('Action URL: ${message.data['action_url']}');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: const Color(0xFFF20571),
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Otwórz'),
@@ -239,7 +239,7 @@ class __HomePageState extends State<_HomePage> {
             Text('NOKKO - $appVersion'),
           ],
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF20571),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -344,7 +344,7 @@ class __HomePageState extends State<_HomePage> {
                       icon: const Icon(Icons.notifications_active),
                       label: const Text('Test Powiadomienia'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: const Color(0xFFF20571),
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -418,7 +418,7 @@ class __HomePageState extends State<_HomePage> {
                           child: Container(
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withAlpha(25),
+                              color: const Color(0xFFF20571).withAlpha(25),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
