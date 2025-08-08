@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mp_slib/mp_slib.dart';
+
+// Instancja local notifications
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 // Custom handler dla NOKKO - logika specyficzna dla tej aplikacji
 @pragma('vm:entry-point')
@@ -22,6 +27,9 @@ void main() async {
   if (!kIsWeb) {
     await Firebase.initializeApp();
     
+    // Inicjalizacja local notifications
+    await _initializeLocalNotifications();
+    
     // Ustaw custom handler dla NOKKO z mp_slib
     setMPBackgroundHandler(nokkoBackgroundHandler);
     
@@ -30,6 +38,45 @@ void main() async {
   }
   
   runApp(const MyApp());
+}
+
+// Funkcja inicjalizacji local notifications
+Future<void> _initializeLocalNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  
+  const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings(
+        requestSoundPermission: true,
+        requestBadgePermission: true,
+        requestAlertPermission: true,
+      );
+  
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+  );
+  
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) async {
+      debugPrint('Local notification clicked: ${response.payload}');
+    },
+  );
+  
+  // Stwórz channel z własnym dźwiękiem
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'nokko_channel',
+    'NOKKO Notifications',
+    description: 'Powiadomienia NOKKO z własnym dźwiękiem',
+    importance: Importance.high,
+    sound: RawResourceAndroidNotificationSound('nokko_signal'),
+    enableVibration: true,
+  );
+  
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
 }
 
 class MyApp extends StatelessWidget {
@@ -99,6 +146,9 @@ class __HomePageState extends State<_HomePage> {
           );
         });
         
+        // Wyświetl lokalne powiadomienie z własnym dźwiękiem
+        await _showLocalNotification(message);
+        
         // Wyświetl niestandardowy dialog zamiast systemowego powiadomienia
         await _showNotificationDialog(message);
       });
@@ -117,6 +167,43 @@ class __HomePageState extends State<_HomePage> {
     } catch (e) {
       debugPrint('❌ Błąd inicjalizacji FCM: $e');
     }
+  }
+
+  // Funkcja do wyświetlania lokalnych powiadomień z własnym dźwiękiem
+  Future<void> _showLocalNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'nokko_channel',
+      'NOKKO Notifications',
+      channelDescription: 'Powiadomienia NOKKO z własnym dźwiękiem',
+      importance: Importance.high,
+      priority: Priority.high,
+      sound: RawResourceAndroidNotificationSound('nokko_signal'),
+      playSound: true,
+      enableVibration: true,
+      icon: '@mipmap/ic_launcher',
+    );
+    
+    const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+        DarwinNotificationDetails(
+      sound: 'nokko_signal.mp3',
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+    
+    await flutterLocalNotificationsPlugin.show(
+      DateTime.now().millisecondsSinceEpoch.remainder(100000),
+      message.notification?.title ?? 'NOKKO',
+      message.notification?.body ?? 'Nowe powiadomienie',
+      platformChannelSpecifics,
+      payload: message.data.toString(),
+    );
   }
 
   Future<void> _showNotificationDialog(RemoteMessage message) async {
@@ -211,10 +298,13 @@ class __HomePageState extends State<_HomePage> {
       },
       notification: const RemoteNotification(
         title: '🔥 NOKKO Test',
-        body: 'To jest testowe powiadomienie o wysokim priorytecie',
+        body: 'To jest testowe powiadomienie z własnym dźwiękiem NOKKO',
       ),
     );
 
+    // Wyświetl lokalne powiadomienie z własnym dźwiękiem
+    await _showLocalNotification(testMessage);
+    
     await _showNotificationDialog(testMessage);
     
     if (mounted) {
@@ -305,6 +395,10 @@ class __HomePageState extends State<_HomePage> {
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    const Text(
+                      '✅ Własny dźwięk powiadomień NOKKO',
+                      style: TextStyle(color: Colors.green),
                     ),
                     const Text(
                       '✅ Wyświetlanie dialogów w aplikacji (foreground)',
