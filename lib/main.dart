@@ -127,10 +127,10 @@ class __HomePageState extends State<_HomePage> {
         return AlertDialog(
           title: Row(
             children: [
-              const Icon(
-                Icons.notifications_active,
-                color: Colors.orange,
-                size: 24,
+              Image.asset(
+                'assets/NOKKO_logo_white.png',
+                height: 20,
+                width: 20,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -228,7 +228,17 @@ class __HomePageState extends State<_HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('🔥 NOKKO - $appVersion'),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/NOKKO_logo_white.png',
+              height: 24,
+              width: 24,
+            ),
+            const SizedBox(width: 8),
+            Text('NOKKO - $appVersion'),
+          ],
+        ),
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
       ),
@@ -237,6 +247,18 @@ class __HomePageState extends State<_HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Logo Section
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Image.asset(
+                  'assets/NOKKO_logo.png',
+                  height: 120,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            
             // FCM Status Card
             Card(
               child: Padding(
@@ -244,11 +266,15 @@ class __HomePageState extends State<_HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.notifications_active, color: Colors.orange),
-                        SizedBox(width: 8),
-                        Text(
+                        Image.asset(
+                          'assets/NOKKO_logo.png',
+                          height: 20,
+                          width: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
                           'Push Notifications Status',
                           style: TextStyle(
                             fontSize: 18,

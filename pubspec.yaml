@@ -43,5 +43,7 @@ flutter:
   # Assets to include in the application.
   assets:
     - ver.txt
+    - assets/NOKKO_logo.png
+    - assets/NOKKO_logo_white.png
     
   
