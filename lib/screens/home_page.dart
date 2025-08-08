@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         );
                         
-                        if (result == true) {
+                        if (result == true && context.mounted) {
                           // Pokazanie prostego SnackBar zamiast LoadingDialog
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

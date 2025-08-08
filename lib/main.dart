@@ -217,11 +217,13 @@ class __HomePageState extends State<_HomePage> {
 
     await _showNotificationDialog(testMessage);
     
-    setState(() {
-      _receivedMessages.add(
-        '🧪 Test: ${testMessage.notification?.title} - ${testMessage.notification?.body}'
-      );
-    });
+    if (mounted) {
+      setState(() {
+        _receivedMessages.add(
+          '🧪 Test: ${testMessage.notification?.title} - ${testMessage.notification?.body}'
+        );
+      });
+    }
   }
 
   @override
@@ -371,7 +373,7 @@ class __HomePageState extends State<_HomePage> {
                           ),
                         );
                         
-                        if (result == true) {
+                        if (result == true && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Pobieranie APK... (symulacja)'),
