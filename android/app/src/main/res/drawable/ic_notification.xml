@@ -1,4 +1,3 @@
-<!-- Ikona powiadomienia dla NOKKO - białe logo -->
+<!-- Ikona powiadomienia dla NOKKO - kolorowe logo -->
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/ic_notification_icon"
-    android:tint="@android:color/white" />
+    android:src="@drawable/ic_notification_icon" />
