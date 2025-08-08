@@ -175,38 +175,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 4),
                     SelectableText(
-                      _fcmToken ?? 'Ładowanie...',
+                      _fcmToken ?? 'Ładowanie info o tokenie...',
                       style: const TextStyle(fontSize: 11),
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      '✅ Obsługa powiadomień o wysokim priorytecie',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text(
-                      '✅ Wyświetlanie dialogów w aplikacji (foreground)',
-                      style: TextStyle(color: Colors.green),
-                    ),
-                    const Text(
-                      '✅ Systemowe powiadomienia (background)',
-                      style: TextStyle(color: Colors.green),
-                    ),
-                    const Text(
-                      '✅ Wybudzanie urządzenia z uśpienia',
-                      style: TextStyle(color: Colors.green),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '🔧 Powered by mp_slib - Enhanced FCM Service',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 12,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
+                   
                   ],
                 ),
               ),
@@ -245,33 +217,18 @@ class _HomePageState extends State<HomePage> {
                     ElevatedButton.icon(
                       onPressed: () async {
                         // Prosty dialog potwierdzenia
-                        bool? result = await showDialog<bool>(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Potwierdzenie'),
-                            content: const Text('Pobrać APK?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
-                                child: const Text('Nie'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
-                                child: const Text('Tak'),
-                              ),
-                            ],
-                          ),
-                        );
+                        bool? result = await CustomDialog.questionDialog(context, 'Chcesz pobrać APK aplikacji NOKKO?');
+                          
                         
                         if (result == true && context.mounted) {
-                          // CustomDialog.questionDialog(context, 'Czy chcesz pobrać APK aplikacji NOKKO?');
+                          
                           LoadingDialog.show(context,'Proszę czekać...');
                           await Utils.getAppApk('https://nokko.pl/APP/app-release.apk');
-                          LoadingDialog.hide(context);
+                          if (context.mounted) LoadingDialog.hide(context);
                         }
                       },
                       icon: const Icon(Icons.download),
-                      label: const Text('APK Reinstall'),
+                      label: const Text('Zainstaluj z APK'),
                     ),
                   ],
                 ),

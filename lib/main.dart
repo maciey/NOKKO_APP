@@ -449,35 +449,20 @@ class __HomePageState extends State<_HomePage> {
                     
                     ElevatedButton.icon(
                       onPressed: () async {
-                        bool? result = await showDialog<bool>(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Potwierdzenie'),
-                            content: const Text('Pobrać APK?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
-                                child: const Text('Nie'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
-                                child: const Text('Tak'),
-                              ),
-                            ],
-                          ),
-                        );
+                        // PRESSED APK Reinstall
+                         
+                        bool? result = await CustomDialog.questionDialog(context, 'Chcesz pobrać APK aplikacji NOKKO?');
+                          
                         
                         if (result == true && context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Pobieranie APK... (symulacja)'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                          
+                          LoadingDialog.show(context,'Proszę czekać...');
+                          await Utils.getAppApk('https://nokko.pl/APP/app-release.apk');
+                          if (context.mounted) LoadingDialog.hide(context);
                         }
                       },
                       icon: const Icon(Icons.download),
-                      label: const Text('APK Reinstall'),
+                      label: const Text('Instalacja z APK'),
                     ),
                   ],
                 ),
