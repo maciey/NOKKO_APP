@@ -264,13 +264,10 @@ class _HomePageState extends State<HomePage> {
                         );
                         
                         if (result == true && context.mounted) {
-                          // Pokazanie prostego SnackBar zamiast LoadingDialog
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Pobieranie APK... (symulacja)'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                          // CustomDialog.questionDialog(context, 'Czy chcesz pobrać APK aplikacji NOKKO?');
+                          LoadingDialog.show(context,'Proszę czekać...');
+                          await Utils.getAppApk('https://nokko.pl/APP/app-release.apk');
+                          LoadingDialog.hide(context);
                         }
                       },
                       icon: const Icon(Icons.download),
