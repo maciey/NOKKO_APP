@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             openButtonText: 'Otwórz',
             onActionPressed: () {
               // Custom akcja dla NOKKO
-              print('NOKKO Action URL: ${message.data['action_url']}');
+              debugPrint('NOKKO Action URL: ${message.data['action_url']}');
             },
           );
         },
@@ -63,12 +63,12 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             _fcmToken = token;
           });
-          print('🔥 NOKKO FCM Token: $token');
+          debugPrint('🔥 NOKKO FCM Token: $token');
         },
       );
       
     } catch (e) {
-      print('❌ Błąd inicjalizacji FCM: $e');
+      debugPrint('❌ Błąd inicjalizacji FCM: $e');
     }
   }
 
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
       accentColor: const Color(0xFFF20571),
       defaultTitle: 'NOKKO Test',
       onActionPressed: () {
-        print('NOKKO Test Action: ${testMessage.data['action_url']}');
+        debugPrint('NOKKO Test Action: ${testMessage.data['action_url']}');
       },
     );
     

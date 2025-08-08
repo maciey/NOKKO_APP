@@ -7,7 +7,7 @@ import 'package:mp_slib/mp_slib.dart';
 // Custom handler dla NOKKO - logika specyficzna dla tej aplikacji
 @pragma('vm:entry-point')
 Future<void> nokkoBackgroundHandler(RemoteMessage message) async {
-  print('🔥 NOKKO Custom logic: ${message.notification?.title}');
+  debugPrint('🔥 NOKKO Custom logic: ${message.notification?.title}');
   // Tutaj można dodać specyficzną logikę dla NOKKO
   // np. zapisywanie do lokalnej bazy danych, specjalne akcje, itp.
 }
@@ -82,7 +82,7 @@ class __HomePageState extends State<_HomePage> {
       );
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('🔥 NOKKO: Uprawnienia do powiadomień przyznane');
+        debugPrint('🔥 NOKKO: Uprawnienia do powiadomień przyznane');
       }
       
       // Pobierz token FCM
@@ -112,10 +112,10 @@ class __HomePageState extends State<_HomePage> {
         });
       });
 
-      print('🔥 NOKKO FCM zainicjalizowany. Token: $token');
+      debugPrint('🔥 NOKKO FCM zainicjalizowany. Token: $token');
       
     } catch (e) {
-      print('❌ Błąd inicjalizacji FCM: $e');
+      debugPrint('❌ Błąd inicjalizacji FCM: $e');
     }
   }
 
@@ -185,7 +185,7 @@ class __HomePageState extends State<_HomePage> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  print('Action URL: ${message.data['action_url']}');
+                  debugPrint('Action URL: ${message.data['action_url']}');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF20571),
